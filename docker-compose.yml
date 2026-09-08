@@ -1,0 +1,24 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: medtrail
+      POSTGRES_USER: medtrail
+      POSTGRES_PASSWORD: medtrail
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+  api:
+    build: ./backend
+    environment:
+      DATABASE_URL: postgresql+psycopg://medtrail:medtrail@db:5432/medtrail
+      STORAGE_DIR: /app/storage
+      MAX_FILE_SIZE_MB: 20
+      JWT_SECRET: CHANGE_THIS_IN_PRODUCTION
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./storage:/app/storage
+    depends_on:
+      - db
+volumes:
+  postgres_data:
