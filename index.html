@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MEDTRAIL — Upload Seguro</title>
+<style>
+body{font-family:Arial,sans-serif;background:#f4f7fb;margin:0;padding:30px;color:#17324d}
+.card{max-width:700px;margin:auto;background:white;padding:28px;border-radius:16px;box-shadow:0 8px 30px #0001}
+h1{margin-top:0}.row{margin:14px 0}label{display:block;font-weight:600;margin-bottom:6px}
+input,select,button{width:100%;padding:12px;border:1px solid #ccd6e0;border-radius:8px;box-sizing:border-box}
+button{background:#1261a0;color:white;border:0;font-weight:700;cursor:pointer;margin-top:12px}
+small{color:#667}.status{margin-top:18px;padding:12px;border-radius:8px;background:#eef5fb;white-space:pre-wrap}
+</style>
+</head>
+<body>
+<div class="card">
+<h1>MEDTRAIL SYSTEM</h1>
+<p>Upload seguro de documentos clínicos</p>
+
+<div class="row"><label>Token</label><input id="token" placeholder="Cole o Bearer token"></div>
+<div class="row"><label>ID do paciente</label><input id="patient" required></div>
+<div class="row"><label>Módulo</label>
+<select id="module">
+<option>BODY_TRAIL</option><option>CLINIC_TRAIL</option><option>FARMOTRAIL</option>
+<option>SOCIAL_LIFESTYLE</option><option>LIFE_RISK</option><option>GENERAL</option>
+</select></div>
+<div class="row"><label>Tipo de documento</label><input id="dtype" placeholder="Ex.: Relatório clínico"></div>
+<div class="row"><label>Ficheiro</label><input id="file" type="file" accept=".pdf,.png,.jpg,.jpeg,.docx,.xlsx"></div>
+<button onclick="upload()">ENVIAR FICHEIRO</button>
+<div id="status" class="status">Aguardando ficheiro...</div>
+</div>
+
+<script>
+async function upload(){
+ const f=document.getElementById('file').files[0];
+ if(!f){alert('Seleccione um ficheiro');return}
+ const fd=new FormData();
+ fd.append('file',f);
+ fd.append('patient_id',document.getElementById('patient').value);
+ fd.append('module',document.getElementById('module').value);
+ fd.append('document_type',document.getElementById('dtype').value||'Documento');
+ const token=document.getElementById('token').value;
+ document.getElementById('status').textContent='A enviar...';
+ const r=await fetch('http://localhost:8000/api/files/upload',{
+   method:'POST',headers:{Authorization:'Bearer '+token},body:fd
+ });
+ const data=await r.json();
+ document.getElementById('status').textContent=JSON.stringify(data,null,2);
+}
+</script>
+</body>
+</html>
