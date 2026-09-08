@@ -4,7 +4,7 @@ python-multipart
 pydantic
 pydantic-settings
 sqlalchemy
-psycopg[binary]
+psycopg2-binary
 python-jose[cryptography]
 passlib[bcrypt]
 python-magic
